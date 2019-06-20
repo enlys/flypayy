@@ -1,0 +1,158 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>index</title>
+        <link rel="stylesheet" href="css/style.css">
+       <style>
+           body{
+               margin: 0px;
+               padding: 0px;
+               background-color: darkgray;
+
+           }
+           #res{
+               width: 170px;
+               height: 170px;
+               display: none;
+               position: absolute;
+               top: 50%;
+               left: 50%;
+              /* margin-left: -100px;*/
+               margin-top: -200px;
+               z-index: 999;
+               background-color: #CDB79E;
+               border-radius: 50%;
+               text-align: center;
+              
+           }
+           #canvas{
+               display:block;
+            margin: 100px auto;
+            background-color: aliceblue;
+            border-radius: 10px;
+           }
+           #mark{
+            position: absolute;
+               right: 100px;
+               top: 20px;
+           }
+           #res h2{
+               text-align: center;
+               padding: 5px 0;
+
+           }
+           #res img{
+               width: 50px;
+               height: 50px;
+               display: block;
+               margin: 0 auto;
+               border-radius: 50%;
+           }
+       </style>
+        <body>
+            <canvas id="canvas" width="800" height="400"></canvas>
+           <div class="mark" id="mark"></div>
+           <div class="res" id="res">
+               <h2 id="h2"></h2>
+               <img src="./img/medals_1.png" >
+           </div>
+            
+
+
+
+
+
+
+
+
+
+
+
+
+        </body>
+        <script src="js/index.js"></script>
+        <script>
+            var canvas=document.getElementById("canvas");
+            var context=canvas.getContext("2d");
+            var img=new Image();
+            img.src="./img/bird0_1.png";
+            var birdx=200;
+            var birdy=100;
+            var birdtime=null;
+            img.onload=function(){
+                if(birdtime==null){
+             
+            birdtime=setInterval(function(){
+                if(birdy<=350){
+                    birdy++;
+                }
+               
+                context.clearRect(0,0,800,400);
+                drawzhuzi();
+                 context.drawImage(img, birdx, birdy);   
+            },10);  
+            }
+        }
+            document.onmousedown=function(){
+                img.src="./img/bird0_2.png";
+                birdy=birdy-30;
+            }
+            document.onmouseup=function(){
+                img.src="./img/bird0_0.png";
+               
+            }
+            //柱子
+            var zhuarr=[];
+           var zhutime=null;
+            function creatzhu(){
+                zhutime= setInterval(function(){
+                    var zhuzi={};//柱子容器
+                zhuzi.positionX=800;
+                zhuzi.positionY=-Math.round(Math.random()*100+100);
+                 zhuzi.imga=new Image();
+             zhuzi.imgb=new Image();
+            zhuzi.imga.src="./img/pipe_down.png";
+            zhuzi.imgb.src="./img/pipe_up.png";
+            zhuzi.id=new Date().getTime();
+            zhuarr.push(zhuzi);
+            
+                },1500);
+               
+            
+            }
+            creatzhu();
+            var same=null;
+            var mark=0;
+            function drawzhuzi(){
+                for(var i=0;i<zhuarr.length;i++){
+                    zhuarr[i].positionX--;
+                   
+                    context.drawImage(zhuarr[i].imga,zhuarr[i].positionX,zhuarr[i].positionY);
+                    context.drawImage(zhuarr[i].imgb,zhuarr[i].positionX,zhuarr[i].positionY+400);
+                    if(birdx+40>=zhuarr[i].positionX&&birdx-70<=zhuarr[i].positionX){
+                      //  console.log("yes");
+                        //加分
+                        if(zhuarr[i].id!=same){
+                            mark++;
+                            same=zhuarr[i].id;
+                            document.getElementById("mark").innerHTML="得分："+mark;
+                        }
+                        //判定碰撞
+                        if(birdy<zhuarr[i].positionY+300||birdy+40>zhuarr[i].positionY+400){
+                           // console.log("up");
+                           clearInterval(zhutime);
+                           clearInterval(birdtime);
+                           var res=document.getElementById("res");
+                           res.style.display="block";
+                           document.getElementById("h2").innerHTML="得分："+mark;
+
+                        }
+
+                    }
+                }
+
+            }
+           
+
+        </script>
+        </html>
